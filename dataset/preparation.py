@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 
-def get_dataset(path = "Data"):
+def load_split_dataset(path = "Data"):
     """
     Loads the dataset from the specified directory and splits it.
 
@@ -115,4 +115,4 @@ def split_dataset(X: np.array, y: np.array):
     return train_split, test_split, train_labels, test_labels
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test = get_dataset()
+    X_train, X_test, y_train, y_test = load_split_dataset()
