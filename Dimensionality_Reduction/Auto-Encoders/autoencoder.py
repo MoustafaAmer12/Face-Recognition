@@ -92,12 +92,12 @@ class AutoencoderTrainer:
         plt.figure(figsize=(20, 4))
         for i in range(n):
             ax = plt.subplot(2, n, i + 1)
-            plt.imshow(self.X_test[i].reshape(image_shape), cmap='gray')
+            plt.imshow(self.X_test[i*5].reshape(image_shape), cmap='gray')
             plt.title("Original")
             plt.axis("off")
 
             ax = plt.subplot(2, n, i + 1 + n)
-            plt.imshow(reconstructed[i].reshape(image_shape), cmap='gray')
+            plt.imshow(reconstructed[i*5].reshape(image_shape), cmap='gray')
             plt.title("Reconstructed")
             plt.axis("off")
 
@@ -123,10 +123,10 @@ if __name__ == "__main__":
     trainer.prepare_data()
 
     # Train if needed
-    trainer.train()
+    # trainer.train()
 
     # Load and visualize
-    # trainer.load_model()
+    trainer.load_model()
     trainer.plot_reconstruction()
 
     # Cluster the latent space using KMeans or GMM
