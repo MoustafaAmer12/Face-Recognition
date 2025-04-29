@@ -50,7 +50,6 @@ class PCA:
         ----------
             X : np.array
                 The dataset either test or train to be mapped to the PCA space.
-
         Returns:
         --------
             mapped_data : np.array
@@ -83,7 +82,7 @@ class PCA:
         explained_variance = np.cumsum(e) / np.sum(e)
         
         self.num_components = np.searchsorted(explained_variance, self.var_threshold) + 1
-        print("Number of components to retain:", self.num_components)
+        print("PCA MODULE\n\tNumber of components to retain:", self.num_components)
 
         self.principal_eigenvals = e[:self.num_components]
         self.principal_eigenvectors = v[:, :self.num_components]
@@ -112,18 +111,19 @@ class PCA:
             self.eigenvals = np.load(self.eigenvals_path)
             self.eigenvectors = np.load(self.eigenvectors_path)
         else:
-            print("Eigenvalues and Eigenvectors not found or empty, calculating them...")
+            print("PCA MODULE\n\tEigenvalues and Eigenvectors not found or empty, calculating them...")
             os.makedirs(os.path.dirname(self.eigenvals_path), exist_ok=True)
             os.makedirs(os.path.dirname(self.eigenvectors_path), exist_ok=True)
-            Z = self.standardize_data(self.X)
-            self.eigenvals, self.eigenvectors = self.calculate_eigenvals(Z)
+
+            self.eigenvals, self.eigenvectors = self.calculate_eigenvals(self.X)
+
             np.save(self.eigenvals_path, self.eigenvals)
             np.save(self.eigenvectors_path, self.eigenvectors)
     
-        print("Eigenvalues & Eigenvectors loaded successfully")
+        print("PCA MODULE\n\tEigenvalues & Eigenvectors loaded successfully")
         return self.eigenvals, self.eigenvectors
 
-    def calculate_eigenvals(self, Z):
+    def calculate_eigenvals(self, X):
         """
         Calculates Eigenvalues and Eigenvectors.
 
@@ -146,9 +146,10 @@ class PCA:
             sorted_v : np.array
                 Corresponding Eigenvectors to sorted eigenvalues 
         """
+        Z = self.standardize_data(X)
         c = np.cov(Z, rowvar=False)
 
-        e, v = np.linalg.eig(c)
+        e, v = np.linalg.eigh(c)
         
         # Sort the eigenvalues and eigenvectors in descending order
         idx = np.argsort(e)[::-1]
@@ -193,3 +194,5 @@ if __name__ == "__main__":
     # test_out = dim_red.map_test_data(X_test)
     # print("PCA Test Output:", test_out)
     pass
+
+# TODO Image Reconstruction

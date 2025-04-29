@@ -4,6 +4,7 @@ from Dimensionality_Reduction.PCA import pca
 from Clustering.GMM.clustering_GMM import GMM
 from Accuracy.GMM_Accuracy.clustering_accuracy import clustering_accuracy
 from Accuracy.GMM_Accuracy.encoder import encoder
+from Clustering.K_Means import kmeans
 
 def main():
     X, y = loader.load_dataset()
