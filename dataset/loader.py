@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 
-def load_split_dataset(path = "Data"):
+def load_dataset(path = "Data"):
     """
     Loads the dataset from the specified directory and splits it.
 
@@ -23,21 +23,17 @@ def load_split_dataset(path = "Data"):
 
     Returns:
     --------
-        train_split : np.array
-            Training set with shape (200, 10304)
-            Contains samples with odd indices from the original dataset.
-        test_split : np.array
-            Testing set with shape (200, 10304)
-            Contains samples with even indices from the original dataset.
-        train_labels : np.array 
-            Labels for the training set with shape (200,)
-            Corresponding labels for the training samples.
-        test_labels : np.array
-            Labels for the testing set with shape (200,)
-            Corresponding labels for the testing samples.
+        X : np.array
+            Dataset with shape (400, 10304)
+            Contains samples with of all images flattened.
+        y : np.array
+            Labels With Shape (400,)
+            Contains labels of all samples in the original dataset.
     """
     dataset = []
     labels = []
+
+    project_dir = os.getcwd()
     current_dir = os.path.dirname(__file__)
     dataset_dir = os.path.join(current_dir, path)
     os.chdir(dataset_dir)
@@ -58,7 +54,8 @@ def load_split_dataset(path = "Data"):
     data_matrix = np.vstack(dataset)
     labels = np.array(labels)
 
-    return split_dataset(data_matrix, labels)
+    os.chdir(project_dir)
+    return data_matrix, labels
 
 def split_dataset(X: np.array, y: np.array):
     """
@@ -115,4 +112,6 @@ def split_dataset(X: np.array, y: np.array):
     return train_split, test_split, train_labels, test_labels
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test = load_split_dataset()
+    X, y = load_dataset()
+    X_train, X_test, y_train, y_test = split_dataset(X, y)
+    

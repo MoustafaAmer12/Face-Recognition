@@ -1,6 +1,9 @@
 # Dataset
 **/Data/
 
+# Caching
+cache/
+
 # Virtual Environment
 /face_rec/
 
