@@ -42,6 +42,8 @@ class KMeans:
                 
         for cluster in self.clusters:
             cluster.get_cluster_label()
+            
+        print(f"KMEANS MODULE\n\t Converged At Iteration: {_ + 1} Of {self.max_iter}")
 
         return self.clusters
     
