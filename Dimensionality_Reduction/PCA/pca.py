@@ -149,11 +149,8 @@ class PCA:
         Z = self.standardize_data(X)
         c = np.cov(Z, rowvar=False)
 
-        e, v = np.linalg.eig(c)
+        e, v = np.linalg.eigh(c)
         
-        e = np.real(e)
-        v = np.real(v)
-
         # Sort the eigenvalues and eigenvectors in descending order
         idx = np.argsort(e)[::-1]
         sorted_e = e[idx]
