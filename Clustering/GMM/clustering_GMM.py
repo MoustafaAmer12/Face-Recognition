@@ -1,7 +1,7 @@
 import numpy as np
 
 class GMM:
-    def __init__(self, n_components, max_iter=100, tol=1e-4, reg_covar=1e-6):
+    def __init__(self, n_components, max_iter=100, tol=1e-4, reg_covar=1e-3):
         """
         Gaussian Mixture Model (GMM) implemented via Expectation-Maximization (EM).
         
