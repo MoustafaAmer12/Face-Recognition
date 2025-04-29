@@ -22,13 +22,11 @@ class GMM:
 
     def _initialize(self, X):
         """Initialize GMM parameters using K-means or random assignment."""
-        n_samples, n_features = X.shape
-        #Initializing equal weights 1/k
+        n_samples, n_features = X.shape #200, 10304
+        #Initializing equal weights = 1/k => vector of weights = <1/k, 1/k, ...>
         self.weights_ = np.ones(self.n_components) / self.n_components
-        
         # Initialize means using random samples
         self.means_ = X[np.random.choice(n_samples, self.n_components, replace=False)]
-        
         # Initialize covariances as identity matrices
         self.covariances_ = np.array([np.eye(n_features) for _ in range(self.n_components)])
 
