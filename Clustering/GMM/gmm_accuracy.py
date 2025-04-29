@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, accuracy_score
 from scipy.optimize import linear_sum_assignment
 
-class clustering_accuracy:
+class gmm_accuracy:
     def __init__(self, true_labels, predicted_labels):
         self.true_labels = true_labels
         self.predicted_labels = predicted_labels

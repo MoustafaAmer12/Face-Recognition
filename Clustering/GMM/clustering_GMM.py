@@ -30,7 +30,6 @@ class GMM:
         # Initialize covariances as identity matrices
         self.covariances_ = np.array([np.eye(n_features) for _ in range(self.n_components)])
 
-        print(f"Weights: {self.weights_}\nMeans: {self.means_}\nCovariances: {self.covariances_}")
     def _compute_log_responsibilities(self, X):
         """E-step: Compute log responsibilities using current parameters."""
         n_samples, n_features = X.shape
