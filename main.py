@@ -30,7 +30,7 @@ def main():
             print(f"for K = {k}:\n responsibility vector:\n{responsibilities}")
 
             #Compute accuracy
-            acc = gmm_accuracy(y_train, responsibilities)
+            acc = gmm_accuracy()
             acc_value = acc.compute_clustering_accuracy(y_train, responsibilities)
             accuracy_results[alpha][k] = acc_value
             print(f"Accuracy: {acc_value*100}%")
