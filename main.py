@@ -12,6 +12,7 @@ def main():
 
     alphas = [0.8, 0.85, 0.9, 0.95]
     K = [20, 40, 60]
+    print(y_train)
 
     accuracy_results = {}
     for alpha in alphas:
@@ -30,12 +31,13 @@ def main():
 
             #Compute accuracy
             acc = gmm_accuracy(y_train, responsibilities)
-            acc_value = acc.compute_accuracy()
+            acc_value = acc.compute_clustering_accuracy(y_train, responsibilities)
             accuracy_results[alpha][k] = acc_value
             print(f"Accuracy: {acc_value*100}%")
     #plot GMM
     plotter = gmm_plotter()
     plotter.plot_accuracy_vs_k(results=accuracy_results)
+
 
 
     

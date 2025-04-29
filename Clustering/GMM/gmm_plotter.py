@@ -14,5 +14,5 @@ class gmm_plotter:
         plt.ylabel("Accuracy")
         plt.legend()
         plt.grid(True)
-        plt.show
+        plt.show()
         

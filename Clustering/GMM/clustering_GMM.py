@@ -1,7 +1,7 @@
 import numpy as np
 
 class GMM:
-    def __init__(self, n_components, max_iter=100, tol=1e-4, reg_covar=1e-3):
+    def __init__(self, n_components, max_iter=100, tol=1e-30, reg_covar=1e-3):
         """
         Gaussian Mixture Model (GMM) implemented via Expectation-Maximization (EM).
         
@@ -21,6 +21,7 @@ class GMM:
         self.log_likelihood_ = []  # Log-likelihood history
 
     def _initialize(self, X):
+        np.random.seed(42)
         """Initialize GMM parameters using K-means or random assignment."""
         n_samples, n_features = X.shape #200, 10304
         #Initializing equal weights = 1/k => vector of weights = <1/k, 1/k, ...>
@@ -42,7 +43,7 @@ class GMM:
             inv_sigma = np.linalg.inv(sigma)
             det_sigma = np.linalg.det(sigma)
             
-            # Compute Mahalanobis distance: (x - mu)^T Sigma^{-1} (x - mu)
+            # (x - mu)^T Sigma^{-1} (x - mu)
             diff = X - self.means_[k]
             quadratic = np.sum((diff @ inv_sigma) * diff, axis=1)
             
