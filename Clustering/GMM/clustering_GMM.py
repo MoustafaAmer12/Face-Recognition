@@ -94,11 +94,5 @@ class GMM:
     def predict(self, X):
         """Predict cluster assignments (hard labels)."""
         log_resp = self._compute_log_responsibilities(X)
+        #For each sample, we find by majority voting the cluster to which this point belongs
         return np.argmax(log_resp, axis=1)
-
-    def predict_proba(self, X):
-        """Predict soft assignments (responsibilities)."""
-        log_resp = self._compute_log_responsibilities(X)
-        max_log = np.max(log_resp, axis=1, keepdims=True)
-        log_sum = max_log + np.log(np.sum(np.exp(log_resp - max_log), axis=1, keepdims=True))
-        return np.exp(log_resp - log_sum)
