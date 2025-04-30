@@ -1,42 +1,28 @@
 import matplotlib.pyplot as plt
+import os
 
-def plot_accuracy_for_k(k_index, k_values, alpha_values, accuracy_matrix):
+os.makedirs("plots", exist_ok=True)
+
+def plot_accuracy_vs_k_for_all_alphas(k_values, alpha_values, accuracy_matrix):
     """
-    Plot accuracy vs alpha for a specific K value.
+    Plot accuracy vs K with multiple lines, one for each alpha value.
 
     Parameters:
-    - k_index: index of the desired K value in k_values list
-    - k_values: list of K values
+    - k_values: list of K values (x-axis)
     - alpha_values: list of alpha values
-    - accuracy_matrix: 2D list where rows = K values, columns = alpha values
+    - accuracy_matrix: 2D list, rows = K values, columns = alpha values
     """
-    accuracies = accuracy_matrix[k_index]
-    k_value = k_values[k_index]
+    for alpha_index, alpha in enumerate(alpha_values):
+        accuracies = [row[alpha_index] for row in accuracy_matrix]
+        plt.plot(k_values, accuracies, marker='o', label=f'α = {alpha}')
 
-    plt.plot(alpha_values, accuracies, marker='o', linestyle='-')
-    plt.title(f'Accuracy vs Alpha (K = {k_value})')
-    plt.xlabel('Alpha Value')
-    plt.ylabel('Accuracy')
-    plt.grid(True)
-    plt.show()
-
-
-def plot_accuracy_for_alpha(alpha_index, k_values, alpha_values, accuracy_matrix):
-    """
-    Plot accuracy vs K for a specific alpha value.
-
-    Parameters:
-    - alpha_index: index of the desired alpha value in alpha_values list
-    - k_values: list of K values
-    - alpha_values: list of alpha values
-    - accuracy_matrix: 2D list where rows = K values, columns = alpha values
-    """
-    accuracies = [row[alpha_index] for row in accuracy_matrix]
-    alpha_value = alpha_values[alpha_index]
-
-    plt.plot(k_values, accuracies, marker='o', linestyle='-')
-    plt.title(f'Accuracy vs K (Alpha = {alpha_value})')
+    plt.title('Accuracy vs K for Different Alpha Values')
     plt.xlabel('K Value')
     plt.ylabel('Accuracy')
+    plt.legend()
     plt.grid(True)
-    plt.show()
+
+    filename = 'plots/accuracy_vs_K_all_alphas.png'
+    plt.savefig(filename)
+    plt.close()
+    print(f"Saved: {filename}")
