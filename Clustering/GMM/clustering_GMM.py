@@ -1,18 +1,20 @@
 import numpy as np
 
 class GMM:
-    def __init__(self, X, n_components, max_iter=100, tol=1e-30, reg_covar=1e-3):
+    def __init__(self, X, Y,n_components, max_iter=100, tol=1e-30, reg_covar=1e-3):
         """
         Gaussian Mixture Model (GMM) implemented via Expectation-Maximization (EM).
         
         Parameters:
             X : training data
+            Y : true labels
             n_components (int): Number of Gaussian components (clusters).
             max_iter (int): Maximum number of EM iterations.
             tol (float): Convergence threshold for log-likelihood change.
             reg_covar (float): Regularization term for covariance matrices.
         """
         self.X = X
+        self.Y = Y
         self.n_components = n_components
         self.max_iter = max_iter
         self.tol = tol
@@ -21,6 +23,7 @@ class GMM:
         self.means_ = None      # Means of Gaussians (mu_k)
         self.covariances_ = None  # Covariance matrices (Sigma_k)
         self.log_likelihood_ = []  # Log-likelihood history
+        self.cluster_labels_ = None  #
 
     def _initialize(self, X):
         np.random.seed(42)
@@ -56,9 +59,9 @@ class GMM:
         return log_resp
 
     def __call__(self):
-        return self.fit(self.X)
+        return self.fit(self.X, self.Y)
 
-    def fit(self, X):
+    def fit(self, X, Y=None):
         """Fit GMM to data using EM algorithm."""
         self._initialize(X)
         n_samples, n_features = X.shape
@@ -93,13 +96,40 @@ class GMM:
                 diff = X - self.means_[k]
                 weighted_diff = resp[:, k, None] * diff
                 self.covariances_[k] = (weighted_diff.T @ diff) / Nk[k] + self.reg_covar * np.eye(n_features)
-        
+                # After fitting, assign labels to clusters via majority voting
+        if Y is not None:
+            self._assign_cluster_labels(X, Y)
         return self
+    def _assign_cluster_labels(self, X, Y):
+        """
+        Assign labels to clusters using majority voting.
+        For each cluster, find the most common label among the samples assigned to it.
+        """
+        # Get hard cluster assignments for the training data
+        log_resp = self._compute_log_responsibilities(X)
+        cluster_assignments = np.argmax(log_resp, axis=1)
+        
+        # Initialize cluster labels
+        self.cluster_labels_ = np.zeros(self.n_components, dtype=int)
+        
+        # For each cluster, find the most common true label
+        for k in range(self.n_components):
+            cluster_points = np.where(cluster_assignments == k)[0]
+            if len(cluster_points) > 0:
+                # Get the labels of points assigned to this cluster
+                cluster_labels = Y[cluster_points]
+                # Find the most common label (mode)
+                unique_labels, counts = np.unique(cluster_labels, return_counts=True)
+                self.cluster_labels_[k] = unique_labels[np.argmax(counts)]
+
 
     def predict(self, X):
-        """Predict cluster assignments (hard labels)."""
+        if self.cluster_labels_ is None:
+            raise ValueError("Model must be fitted with labels before prediction")
         log_resp = self._compute_log_responsibilities(X)
-        #For each sample, we find by majority voting the cluster to which this point belongs
-        return np.argmax(log_resp, axis=1)
+        cluster_assignemnts = np.argmax(log_resp, axis=1)
+        predicted_labels = self.cluster_labels_[cluster_assignemnts]
+        return predicted_labels
+
     def test(self,X):
         return self.predict(X)
