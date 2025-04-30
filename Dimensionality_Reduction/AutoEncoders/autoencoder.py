@@ -3,12 +3,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
-import dataset.loader as loader
+import Data.loader as loader
 import matplotlib.pyplot as plt
 
 
 class Autoencoder(nn.Module):
-    def __init__(self, input_dim=10304, latent_dim=50):
+    def __init__(self, input_dim=10304, latent_dim=128):
         super(Autoencoder, self).__init__()
         self.encoder = nn.Sequential(
             nn.Linear(input_dim, 512),
@@ -44,8 +44,22 @@ class AutoencoderTrainer:
         self.model_path = model_path
         self.standardize = standardize
 
-    def prepare_data(self):
-        X, y = loader.load_dataset()
+    def __call__(self, X):
+        """
+        Returns the latent representation of input X, mimicking PCA behavior.
+        Standardizes the input if self.standardize is True.
+        """
+        if self.standardize:
+            X = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
+        else:
+            X = (X - np.mean(X)) / np.std(X)
+
+        return self.get_latent_representation(X)
+
+    def prepare_data(self, X=None, y=None):
+        if X is None or y is None:
+            X, y = loader.load_dataset()
+
         X_train, X_test, y_train, y_test = loader.split_dataset(X, y)
 
         # Feature-wise standardization
@@ -61,6 +75,7 @@ class AutoencoderTrainer:
         train_tensor = torch.tensor(X_train, dtype=torch.float32)
         self.train_loader = DataLoader(TensorDataset(train_tensor), batch_size=self.batch_size, shuffle=True)
         self.X_test = X_test 
+        self.X_train = X_train
 
     def train(self):
         self.model.train()
@@ -82,12 +97,15 @@ class AutoencoderTrainer:
     def load_model(self):
         self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
         print(f"Model loaded from {self.model_path}")
-    
-    def plot_reconstruction(self, n=10, image_shape=(112, 92)):
+    def reconstruct(self, X):
         self.model.eval()
         with torch.no_grad():
-            inputs = torch.tensor(self.X_test, dtype=torch.float32).to(self.device)
+            inputs = torch.tensor(X, dtype=torch.float32).to(self.device)
             reconstructed = self.model(inputs).cpu().numpy()
+        return reconstructed
+    
+    def plot_reconstruction(self, n=10, image_shape=(112, 92)):
+        reconstructed = self.reconstruct(self.X_test)
 
         plt.figure(figsize=(20, 4))
         for i in range(n):
@@ -115,6 +133,13 @@ class AutoencoderTrainer:
         cluster_labels = clustering_model.fit_predict(latent_features)
         
         return cluster_labels
+    
+    def get_latent_representation(self, X):
+        self.model.eval()
+        with torch.no_grad():
+            inputs = torch.tensor(X, dtype=torch.float32).to(self.device)
+            latent_representation = self.model.get_latent_representation(inputs).cpu().numpy()
+        return latent_representation
 
 
 
