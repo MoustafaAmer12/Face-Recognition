@@ -4,6 +4,8 @@ from Dimensionality_Reduction.PCA import pca
 from Clustering.GMM.clustering_GMM import GMM
 from Clustering.GMM.gmm_accuracy import gmm_accuracy
 from Clustering.GMM.gmm_plotter import gmm_plotter
+from Evaluation_Metrics import metrics as eval
+
 
 def main():
     X, y = loader.load_dataset()
@@ -34,19 +36,17 @@ def main():
             acc_value = acc.compute_clustering_accuracy(y_train, responsibilities)
             accuracy_results[alpha][k] = acc_value
             print(f"Accuracy: {acc_value*100}%")
+            
+            print("----Testing----")
+            eval.plot_confusion_matrix(y_test, responsibilities, title=f'Confusion Matrix (α={alpha}, K={k})')
+            accuracy = acc.compute_clustering_accuracy(y_test, responsibilities)
+            f1 = eval.f1_score(y_test, responsibilities, average='macro')
+            print(f"Accuracy: {accuracy:.4f}")
+            print(f"F1 Score: {f1:.4f}")
     #plot GMM
     plotter = gmm_plotter()
     plotter.plot_accuracy_vs_k(results=accuracy_results)
 
-
-
-    
-
-    eval.plot_confusion_matrix(y_test, clusterd_out, title='KMeans K=20 Clustering At Variance = 0.8', figsize=(12, 10), save_path='plots/kmeans_20_08.png')
-    accuracy = eval.accuracy_score(y_test, clusterd_out)
-    f1 = eval.f1_score(y_test, clusterd_out, average='macro')
-    print(f"Accuracy: {accuracy:.4f}")
-    print(f"F1 Score: {f1:.4f}")
 
 if __name__ == "__main__":
     main()
