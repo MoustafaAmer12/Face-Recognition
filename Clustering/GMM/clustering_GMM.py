@@ -1,16 +1,18 @@
 import numpy as np
 
 class GMM:
-    def __init__(self, n_components, max_iter=100, tol=1e-30, reg_covar=1e-3):
+    def __init__(self, X, n_components, max_iter=100, tol=1e-30, reg_covar=1e-3):
         """
         Gaussian Mixture Model (GMM) implemented via Expectation-Maximization (EM).
         
         Parameters:
+            X : training data
             n_components (int): Number of Gaussian components (clusters).
             max_iter (int): Maximum number of EM iterations.
             tol (float): Convergence threshold for log-likelihood change.
             reg_covar (float): Regularization term for covariance matrices.
         """
+        self.X = X
         self.n_components = n_components
         self.max_iter = max_iter
         self.tol = tol
@@ -52,6 +54,9 @@ class GMM:
             log_resp[:, k] = np.log(self.weights_[k]) + log_pdf
         
         return log_resp
+
+    def __call__(self):
+        return self.fit(self.X)
 
     def fit(self, X):
         """Fit GMM to data using EM algorithm."""
@@ -96,3 +101,5 @@ class GMM:
         log_resp = self._compute_log_responsibilities(X)
         #For each sample, we find by majority voting the cluster to which this point belongs
         return np.argmax(log_resp, axis=1)
+    def test(self,X):
+        return self.predict(X)
