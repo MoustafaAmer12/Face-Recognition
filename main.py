@@ -52,7 +52,7 @@ def get_clusterer(method, X_train, y_train, k):
     if method == "kmeans":
         return kmeans_module.KMeans(X_train, y_train, k=k, max_iter=100, threshold=1e-10, random_state=42)
     elif method == "gmm":
-        gmm_component = GMM(X=X_train, n_components=k)
+        gmm_component = GMM(X=X_train, Y=y_train, n_components=k)
         #gmm_component.fit(X_train)
         return gmm_component
     else:
