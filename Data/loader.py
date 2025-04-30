@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 
-def load_dataset(path = "Data"):
+def load_dataset(path = "dataset"):
     """
     Loads the dataset from the specified directory and splits it.
 
