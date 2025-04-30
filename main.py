@@ -42,5 +42,11 @@ def main():
 
     
 
+    eval.plot_confusion_matrix(y_test, clusterd_out, title='KMeans K=20 Clustering At Variance = 0.8', figsize=(12, 10), save_path='plots/kmeans_20_08.png')
+    accuracy = eval.accuracy_score(y_test, clusterd_out)
+    f1 = eval.f1_score(y_test, clusterd_out, average='macro')
+    print(f"Accuracy: {accuracy:.4f}")
+    print(f"F1 Score: {f1:.4f}")
+
 if __name__ == "__main__":
     main()
