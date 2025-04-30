@@ -1,9 +1,12 @@
+import numpy as np
 import argparse
 import numpy as np
 from Data import loader
 from Dimensionality_Reduction.PCA import pca
 from Dimensionality_Reduction.AutoEncoders.autoencoder import AutoencoderTrainer
-from Clustering.K_Means import kmeans as kmeans_module
+from Clustering.GMM.clustering_GMM import GMM
+from Clustering.GMM.gmm_accuracy import gmm_accuracy
+from Clustering.GMM.gmm_plotter import gmm_plotter as kmeans_module
 # from Clustering.GMM import gmm as gmm_module
 from Evaluation_Metrics import metrics as eval
 from Clustering.K_Means import plotting
@@ -59,7 +62,7 @@ def main():
     args = parser.parse_args()
 
     X, y = loader.load_dataset()
-    X_train, X_test, y_train, y_test = loader.split_dataset(X, y)
+    y = y.astype(int)    X_train, X_test, y_train, y_test = loader.split_dataset(X, y)
 
     K_values = [20, 40, 60]
     alpha_values = [0.8, 0.85, 0.9, 0.95]
@@ -83,7 +86,7 @@ def main():
             clusterer()
             clustered_out = clusterer.test(test_out)
 
-            accuracy = eval.accuracy_score(y_train, clustered_out)
+    accuracy = eval.accuracy_score(y_train, clustered_out)
             f1 = eval.f1_score(y_test, clustered_out, average='macro')
 
             accuracies.append(accuracy)
