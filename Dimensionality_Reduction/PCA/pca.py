@@ -19,6 +19,8 @@ class PCA:
         self.eigenvals = None
         self.eigenvectors = None
         self.num_components = None
+        self.means = None
+        self.stds = None
 
         project_dir = os.getcwd()
         self.eigenvals_path = os.path.join(project_dir, "cache", "eigenvals.npy")
@@ -55,7 +57,7 @@ class PCA:
             mapped_data : np.array
                 Mapped Dataset
         """
-        Z = self.standardize_data(X)
+        Z = self.standardize_data(X, is_train=False)
         mapped_data = Z @ self.principal_eigenvectors
         return mapped_data
     
@@ -158,8 +160,8 @@ class PCA:
 
         return sorted_e, sorted_v
     
-    @staticmethod
-    def standardize_data(X):
+    # @staticmethod
+    def standardize_data(self, X, is_train=True):
         """
         Standardizes The Training Dataset
 
@@ -176,11 +178,30 @@ class PCA:
             Z : np.array 
                 Standardized Dataset
         """
-        means = X.mean(axis=0)
-        std = X.std(axis=0)
-
-        Z = (X - means) / std
+        if is_train:
+            self.means = X.mean(axis=0)
+            self.stds = X.std(axis=0)
+        Z = (X - self.means) / self.stds
         return Z
+        
+    def reconstruct(self, Z):
+        """
+        Reconstructs the original data from the PCA-reduced data.
+
+        Parameters:
+        ----------
+            Z : np.array
+                The PCA-transformed data
+
+        Returns:
+        --------
+            X_reconstructed : np.array
+                The reconstructed original data
+        """
+        X_std = Z @ self.principal_eigenvectors.T
+        X_reconstructed = X_std * self.stds + self.means
+        return X_reconstructed
+
 
 if __name__ == "__main__":
     # Example Usage
